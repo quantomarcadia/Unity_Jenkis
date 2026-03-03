@@ -24,41 +24,34 @@ public class BuildScript
     }
     
     public static void BuildAndroid()
+{
+    string[] args = Environment.GetCommandLineArgs();
+    string buildType = GetArgument(args, "-buildType");
+
+    bool isAAB = buildType == "AAB";
+
+    string folderPath = isAAB ? "Builds/AndroidAAB" : "Builds/AndroidAPK";
+    string fileName = isAAB ? "MyGame.aab" : "MyGame.apk";
+
+    CreateDirectory(folderPath);
+
+    string fullPath = Path.Combine(folderPath, fileName);
+
+    if (File.Exists(fullPath))
+        File.Delete(fullPath);
+
+    EditorUserBuildSettings.buildAppBundle = isAAB;
+
+    BuildPlayerOptions options = new BuildPlayerOptions
     {
-        string[] args = Environment.GetCommandLineArgs();
-        string builType = GetArgument(args, "-buildType");
+        scenes = GetEnabledScenes(),
+        locationPathName = fullPath,
+        target = BuildTarget.Android,
+        options = BuildOptions.None
+    };
 
-        string path;
-        if (builType == "APK")
-        {
-            path = "Builds/AndroidAPK/MyGame.apk";
-        }
-        else if (builType == "AAB")
-        {
-            path = "Builds/AndroidAAB/MyGame.aab";
-        }
-        else
-        {
-            return;
-        }
-
-        CreateDirectory(path);
-
-        BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions
-        {
-            scenes = GetEnabledScenes(),
-            locationPathName = $"{path}",
-            target = BuildTarget.Android,
-            options = BuildOptions.None
-        };
-
-        PlayerSettings.Android.minSdkVersion = (AndroidSdkVersions)25;
-        PlayerSettings.Android.targetSdkVersion = (AndroidSdkVersions)34;
-        EditorUserBuildSettings.buildAppBundle = (builType == "AAB") ? true : false;
-
-        BuildPipeline.BuildPlayer(buildPlayerOptions);
-
-    }
+    BuildPipeline.BuildPlayer(options);
+}
 
     public static void CreateDirectory(string path)
     {
