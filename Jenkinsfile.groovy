@@ -75,5 +75,25 @@ pipeline{
                 echo 'Deploy Android AAB'
             }
         }
+
+        stage('Build Linux Server'){
+            when{expression{BUILD_LINUX_SERVER == 'true'}}
+            steps{
+                script{
+                    withEnv(["UNITY_PATH=${UNITY_INSTALLATION}"]){
+                        bat '''
+                            "%UNITY_PATH%\\Unity.exe" -quit -batchmode -projectPath "%PROJECT_PATH%" -executeMethod BuildScript.BuildLinuxServer -logFile -
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Deploy Linux Server'){
+            when{expression{DEPLOY_LINUX_SERVER == 'true'}}
+            steps{
+                echo 'Deploy Linux Server'
+            }
+        }
     }
 }
