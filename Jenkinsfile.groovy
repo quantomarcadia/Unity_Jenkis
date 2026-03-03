@@ -35,5 +35,45 @@ pipeline{
                 echo 'Deploy Windows'
             }
         }
+
+        stage('Build Android APK'){
+            when{expression{BUILD_ANDROID_APK == 'true'}}
+            steps{
+                script{
+                    withEnv(["UNITY_PATH=${UNITY_INSTALLATION}"]){
+                        bat '''
+                            "%UNITY_PATH%\\Unity.exe" -quit -batchmode -projectPath "%PROJECT_PATH%" -executeMethod BuildScript.BuildAndroid -buildType APK -logFile -
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Deploy Android APK'){
+            when{expression{DEPLOY_ANDROID_APK == 'true'}}
+            steps{
+                echo 'Deploy Android APK'
+            }
+        }
+
+        stage('Build Android AAB'){
+            when{expression{BUILD_ANDROID_AAB == 'true'}}   
+            steps{
+                script{
+                    withEnv(["UNITY_PATH=${UNITY_INSTALLATION}"]){
+                        bat '''
+                            "%UNITY_PATH%\\Unity.exe" -quit -batchmode -projectPath "%PROJECT_PATH%" -executeMethod BuildScript.BuildAndroid -buildType AAB -logFile -
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Deploy Android AAB'){
+            when{expression{DEPLOY_ANDROID_AAB == 'true'}}
+            steps{
+                echo 'Deploy Android AAB'
+            }
+        }
     }
 }
