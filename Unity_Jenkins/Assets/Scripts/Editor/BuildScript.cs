@@ -13,7 +13,6 @@ public class BuildScript
     // ===========================
     public static void BuildWindows()
     {
-        // Switch platform if needed
         if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.StandaloneWindows64)
         {
             EditorUserBuildSettings.SwitchActiveBuildTarget(
@@ -21,6 +20,9 @@ public class BuildScript
                 BuildTarget.StandaloneWindows64
             );
         }
+
+        // IMPORTANT: Reset server mode
+        EditorUserBuildSettings.standaloneBuildSubtarget = StandaloneBuildSubtarget.Player;
 
         string folderPath = "Builds/Windows";
         CreateDirectory(folderPath);
@@ -35,6 +37,7 @@ public class BuildScript
             scenes = GetEnabledScenes(),
             locationPathName = exePath,
             target = BuildTarget.StandaloneWindows64,
+            subtarget = (int)StandaloneBuildSubtarget.Player,
             options = BuildOptions.None
         };
 
@@ -52,9 +55,8 @@ public class BuildScript
         }
     }
 
-
     // ===========================
-    // ANDROID BUILD (APK / AAB)
+    // ANDROID BUILD
     // ===========================
     public static void BuildAndroid()
     {
@@ -71,7 +73,7 @@ public class BuildScript
 
         if (string.IsNullOrEmpty(buildType))
         {
-            Debug.LogError("Missing -buildType argument (APK or AAB)");
+            Debug.LogError("Missing -buildType argument");
             EditorApplication.Exit(1);
             return;
         }
@@ -114,7 +116,6 @@ public class BuildScript
         }
     }
 
-
     // ===========================
     // LINUX HEADLESS SERVER
     // ===========================
@@ -127,6 +128,9 @@ public class BuildScript
                 BuildTarget.StandaloneLinux64
             );
         }
+
+        // IMPORTANT: Set server mode
+        EditorUserBuildSettings.standaloneBuildSubtarget = StandaloneBuildSubtarget.Server;
 
         string folderPath = "Builds/LinuxServer";
         CreateDirectory(folderPath);
@@ -141,6 +145,7 @@ public class BuildScript
             scenes = GetEnabledScenes(),
             locationPathName = serverPath,
             target = BuildTarget.StandaloneLinux64,
+            subtarget = (int)StandaloneBuildSubtarget.Server,
             options = BuildOptions.EnableHeadlessMode
         };
 
@@ -157,9 +162,8 @@ public class BuildScript
         }
     }
 
-
     // ===========================
-    // HELPER METHODS
+    // HELPERS
     // ===========================
 
     private static void CreateDirectory(string path)
