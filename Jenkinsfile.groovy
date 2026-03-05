@@ -16,13 +16,14 @@ pipeline{
     }
 
     stages{
+
         stage('Build Windows'){
             when{expression{BUILD_WINDOWS == 'true'}}
             steps{
                 script{
                     withEnv(["UNITY_PATH=${UNITY_INSTALLATION}"]){
                         bat '''
-                            "%UNITY_PATH%\\Unity.exe" -quit -batchmode -projectPath "%PROJECT_PATH%" -executeMethod BuildScript.BuildWindows -logFile -
+                        "%UNITY_PATH%\\Unity.exe" -quit -batchmode -nographics -buildTarget StandaloneWindows64 -projectPath "%PROJECT_PATH%" -executeMethod BuildScript.BuildWindows -logFile -
                         '''
                     }
                 }
@@ -42,7 +43,7 @@ pipeline{
                 script{
                     withEnv(["UNITY_PATH=${UNITY_INSTALLATION}"]){
                         bat '''
-                            "%UNITY_PATH%\\Unity.exe" -quit -batchmode -projectPath "%PROJECT_PATH%" -executeMethod BuildScript.BuildAndroid -buildType APK -logFile -
+                        "%UNITY_PATH%\\Unity.exe" -quit -batchmode -nographics -buildTarget Android -projectPath "%PROJECT_PATH%" -executeMethod BuildScript.BuildAndroid -buildType APK -logFile -
                         '''
                     }
                 }
@@ -57,12 +58,12 @@ pipeline{
         }
 
         stage('Build Android AAB'){
-            when{expression{BUILD_ANDROID_AAB == 'true'}}   
+            when{expression{BUILD_ANDROID_AAB == 'true'}}
             steps{
                 script{
                     withEnv(["UNITY_PATH=${UNITY_INSTALLATION}"]){
                         bat '''
-                            "%UNITY_PATH%\\Unity.exe" -quit -batchmode -projectPath "%PROJECT_PATH%" -executeMethod BuildScript.BuildAndroid -buildType AAB -logFile -
+                        "%UNITY_PATH%\\Unity.exe" -quit -batchmode -nographics -buildTarget Android -projectPath "%PROJECT_PATH%" -executeMethod BuildScript.BuildAndroid -buildType AAB -logFile -
                         '''
                     }
                 }
@@ -82,7 +83,7 @@ pipeline{
                 script{
                     withEnv(["UNITY_PATH=${UNITY_INSTALLATION}"]){
                         bat '''
-                            "%UNITY_PATH%\\Unity.exe" -quit -batchmode -projectPath "%PROJECT_PATH%" -executeMethod BuildScript.BuildLinuxServer -logFile -
+                        "%UNITY_PATH%\\Unity.exe" -quit -batchmode -nographics -buildTarget StandaloneLinux64 -projectPath "%PROJECT_PATH%" -executeMethod BuildScript.BuildLinuxServer -logFile -
                         '''
                     }
                 }
@@ -95,5 +96,6 @@ pipeline{
                 echo 'Deploy Linux Server'
             }
         }
+
     }
 }
